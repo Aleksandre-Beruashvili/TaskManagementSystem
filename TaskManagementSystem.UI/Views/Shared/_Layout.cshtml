@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Task Management System</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="~/js/site.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="@Url.Action("Index", "Home")">Home</a></li>
+                <li><a href="@Url.Action("Index", "Projects")">Projects</a></li>
+                <li><a href="@Url.Action("Index", "Labels")">Labels</a></li>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li>Hello, @User.Identity.Name!</li>
+                    <li>
+                        <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
+                            @Html.AntiForgeryToken()
+                            <button type="submit">Logout</button>
+                        </form>
+                    </li>
+                }
+                else
+                {
+                    <li><a href="@Url.Action("Login", "Account")">Login</a></li>
+                    <li><a href="@Url.Action("Register", "Account")">Register</a></li>
+                }
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        @RenderBody()
+    </div>
+    <footer>
+        <p>&copy; @DateTime.Now.Year - Task Management System</p>
+    </footer>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

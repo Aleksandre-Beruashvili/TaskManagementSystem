@@ -1,0 +1,23 @@
+﻿@model TaskManagementSystem.Application.DTOs.CreateProjectDto
+@{
+    ViewData["Title"] = "Edit Project";
+}
+<h1>Edit Project</h1>
+<form asp-action="Edit" method="post">
+    <div>
+        <label asp-for="Name"></label>
+        <input asp-for="Name" />
+        <span asp-validation-for="Name"></span>
+    </div>
+    <div>
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description"></textarea>
+        <span asp-validation-for="Description"></span>
+    </div>
+    <div>
+        <label asp-for="DueDate"></label>
+        <input asp-for="DueDate" type="date" />
+        <span asp-validation-for="DueDate"></span>
+    </div>
+    <button type="submit">Save</button>
+</form>

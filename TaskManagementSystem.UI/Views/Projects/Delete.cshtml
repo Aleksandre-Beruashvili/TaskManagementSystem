@@ -1,0 +1,11 @@
+﻿@model TaskManagementSystem.Application.DTOs.ProjectDto
+@{
+    ViewData["Title"] = "Delete Project";
+}
+<h1>Delete Project</h1>
+<p>Are you sure you want to delete project "@Model.Name"?</p>
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" value="@Model.Id" />
+    <button type="submit">Delete</button>
+    <a href="/Projects/Details/@Model.Id">Cancel</a>
+</form>

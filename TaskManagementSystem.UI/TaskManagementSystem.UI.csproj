@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="sib_api_v3_sdk" Version="4.0.2" />
+    <PackageReference Include="SparkPost" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TaskManagementSystem.Application\TaskManagementSystem.Application.csproj" />
+    <ProjectReference Include="..\TaskManagementSystem.Domain\TaskManagementSystem.Domain.csproj" />
+    <ProjectReference Include="..\TaskManagementSystem.Infrastructure\TaskManagementSystem.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

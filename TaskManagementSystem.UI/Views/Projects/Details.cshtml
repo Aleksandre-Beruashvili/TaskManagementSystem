@@ -1,0 +1,12 @@
+﻿@model TaskManagementSystem.Application.DTOs.ProjectDto
+@{
+    ViewData["Title"] = "Project Details";
+}
+<h1>@Model.Name</h1>
+<p>@Model.Description</p>
+<p>Due: @Model.DueDate.ToShortDateString()</p>
+<p>
+    <a href="/Projects/Edit/@Model.Id">Edit</a> |
+    <a href="/Projects/Delete/@Model.Id">Delete</a> |
+    <a href="/Tasks?projectId=@Model.Id">View Tasks</a>
+</p>

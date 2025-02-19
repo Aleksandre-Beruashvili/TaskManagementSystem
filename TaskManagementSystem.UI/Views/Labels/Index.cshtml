@@ -1,0 +1,27 @@
+﻿@model IEnumerable<TaskManagementSystem.Application.DTOs.LabelDto>
+@{
+    ViewData["Title"] = "Labels";
+}
+<h1>Labels</h1>
+<p><a href="/Labels/Create">Create New Label</a></p>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var label in Model)
+        {
+            <tr>
+                <td>@label.Name</td>
+                <td>
+                    <a href="/Labels/Details/@label.Id">Details</a> |
+                    <a href="/Labels/Edit/@label.Id">Edit</a> |
+                    <a href="/Labels/Delete/@label.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

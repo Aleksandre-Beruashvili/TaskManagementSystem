@@ -1,0 +1,47 @@
+﻿@model TaskManagementSystem.Application.DTOs.CreateTaskDto
+
+@{
+    ViewData["Title"] = "Create Task";
+}
+
+<h1>Create Task</h1>
+
+<form asp-action="Create" method="post">
+    <input type="hidden" asp-for="ProjectId" />
+    <div>
+        <label asp-for="Title"></label>
+        <input asp-for="Title" />
+        <span asp-validation-for="Title"></span>
+    </div>
+    <div>
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description"></textarea>
+        <span asp-validation-for="Description"></span>
+    </div>
+    <div>
+        <label asp-for="DueDate"></label>
+        <input asp-for="DueDate" type="date" />
+        <span asp-validation-for="DueDate"></span>
+    </div>
+    <div>
+        <label asp-for="Priority"></label>
+        <select asp-for="Priority">
+            <option value="Low">Low</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="High">High</option>
+        </select>
+        <span asp-validation-for="Priority"></span>
+    </div>
+    <div>
+        <label asp-for="AssignedUserId">Assign User (UserId)</label>
+        <input asp-for="AssignedUserId" />
+        <span asp-validation-for="AssignedUserId"></span>
+    </div>
+    <button type="submit">Create</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
