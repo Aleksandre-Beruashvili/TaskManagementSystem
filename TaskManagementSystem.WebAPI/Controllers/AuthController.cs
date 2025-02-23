@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using TaskManagementSystem.Infrastructure.Identity;
 using TaskManagementSystem.Application.DTOs;
 using TaskManagementSystem.Infrastructure.Services;
@@ -41,14 +39,14 @@ namespace TaskManagementSystem.WebAPI.Controllers
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            // Generate email confirmation token
+            // Generate email confirmation token.
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            // Generate a confirmation link using Url.Action (if available) or build manually.
-            // Note: In WebAPI, Url.Action might require additional configuration (or you may build the URL manually)
+            // Build confirmation link (ensure URL generation works in your environment)
             var confirmationLink = Url.Action(nameof(ConfirmEmail), "Auth", new { userId = user.Id, token = token }, Request.Scheme);
-            // Send email with confirmation link
+
+            // Send confirmation email.
             await _emailService.SendEmailAsync(user.Email, "Confirm your email",
-                $"Please confirm your account by clicking on the following link: {confirmationLink}");
+                $"Please confirm your account by clicking the following link: {confirmationLink}");
 
             return Ok("User registered successfully. Please check your email to confirm your account.");
         }
@@ -144,6 +142,7 @@ namespace TaskManagementSystem.WebAPI.Controllers
             return BadRequest(result.Errors);
         }
 
+        // NEW: Send one-time verification code endpoint.
         [HttpPost("sendverificationcode")]
         public async Task<IActionResult> SendVerificationCode([FromBody] SendVerificationDto dto)
         {
@@ -153,9 +152,11 @@ namespace TaskManagementSystem.WebAPI.Controllers
 
             // Generate a random 6-digit code.
             var code = new Random().Next(100000, 999999).ToString();
+
+            // Optionally, store this code for later verification.
             await _emailService.SendVerificationCodeAsync(dto.Email, code);
 
-            // For demonstration, return the code (DO NOT do this in production)
+            // For demonstration purposes only – do not return the code in production.
             return Ok(new { Message = "Verification code sent.", Code = code });
         }
     }

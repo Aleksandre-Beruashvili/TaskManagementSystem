@@ -53,13 +53,5 @@ namespace TaskManagementSystem.WebAPI.Controllers
             await _projectService.DeleteProjectAsync(id);
             return NoContent();
         }
-
-        // NEW: Search endpoint for projects.
-        [HttpGet("search")]
-        public async Task<IActionResult> SearchProjects([FromQuery] string keyword)
-        {
-            var projects = await _projectService.SearchProjectsAsync(keyword);
-            return Ok(projects);
-        }
     }
 }
