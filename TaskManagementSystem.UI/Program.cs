@@ -1,66 +1,62 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using TaskManagementSystem.Infrastructure.Data;
-using TaskManagementSystem.Infrastructure.Identity;
-using TaskManagementSystem.Application.Services;
-using TaskManagementSystem.Application.Interfaces;
-using TaskManagementSystem.Infrastructure.Services;
-using TaskManagementSystem.Infrastructure.Repositories;
-using TaskManagementSystem.Domain.Interfaces;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using TaskManagementSystem.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Get connection string from configuration
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// Read the WebAPI base URL from configuration.
+var webApiBaseUrl = builder.Configuration["WebApiBaseUrl"];
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Configure EF Core
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+// Register a simple token service.
+builder.Services.AddSingleton<ITokenService, TokenService>();
 
-// Configure ASP.NET Core Identity
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+// Register a DelegatingHandler to attach the JWT token automatically.
+builder.Services.AddTransient<JwtAuthorizationMessageHandler>();
 
-// Configure cookie policy to enforce secure cookies and SameSite mode
-builder.Services.Configure<CookiePolicyOptions>(options =>
+// Register typed HttpClient services for API consumption using the correct base URL.
+builder.Services.AddHttpClient<IAuthApiService, AuthApiService>(client =>
 {
-    options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.Strict;
-    options.Secure = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
-});
+    client.BaseAddress = new Uri(webApiBaseUrl);
+})
+// Since you're using HTTP (not HTTPS), you don't need to bypass certificate validation.
+.AddHttpMessageHandler<JwtAuthorizationMessageHandler>();
 
-// Register Application and Infrastructure services
-builder.Services.AddScoped<IProjectService, ProjectService>();
-builder.Services.AddScoped<ITaskService, TaskService>();
-builder.Services.AddScoped<ILabelService, LabelService>();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddHttpClient<IProjectApiService, ProjectApiService>(client =>
+{
+    client.BaseAddress = new Uri(webApiBaseUrl);
+})
+.AddHttpMessageHandler<JwtAuthorizationMessageHandler>();
 
-builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+builder.Services.AddHttpClient<ITaskApiService, TaskApiService>(client =>
+{
+    client.BaseAddress = new Uri(webApiBaseUrl);
+})
+.AddHttpMessageHandler<JwtAuthorizationMessageHandler>();
+
+builder.Services.AddHttpClient<ILabelApiService, LabelApiService>(client =>
+{
+    client.BaseAddress = new Uri(webApiBaseUrl);
+})
+.AddHttpMessageHandler<JwtAuthorizationMessageHandler>();
 
 var app = builder.Build();
-
-// Enforce HTTPS redirection
-app.UseHttpsRedirection();
-
-// Use cookie policy middleware to enforce cookie settings
-app.UseCookiePolicy();
 
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-
+app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllers();
 
 app.MapControllerRoute(
     name: "default",

@@ -29,5 +29,10 @@
         </select>
         <span asp-validation-for="Priority"></span>
     </div>
+    <div>
+        <label asp-for="AssignedUserId">Assign User (UserId)</label>
+        <input asp-for="AssignedUserId" />
+        <span asp-validation-for="AssignedUserId"></span>
+    </div>
     <button type="submit">Save</button>
 </form>

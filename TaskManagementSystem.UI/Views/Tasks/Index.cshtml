@@ -11,7 +11,8 @@
             <th>Description</th>
             <th>Due Date</th>
             <th>Priority</th>
-            <th>Status</th>
+            <th>State</th>
+            <th>Assigned User</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -24,6 +25,7 @@
                 <td>@task.DueDate.ToShortDateString()</td>
                 <td>@task.Priority</td>
                 <td>@task.State</td>
+                <td>@task.AssignedUserId</td>
                 <td>
                     <a href="/Tasks/Details/@task.Id">Details</a> |
                     <a href="/Tasks/Edit/@task.Id">Edit</a> |

@@ -1,15 +1,15 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
 using TaskManagementSystem.Infrastructure.Data;
 using TaskManagementSystem.Infrastructure.Identity;
-using TaskManagementSystem.Infrastructure.Repositories;
 using TaskManagementSystem.Infrastructure.Services;
 using TaskManagementSystem.Domain.Interfaces;
 using TaskManagementSystem.Application.Services;
 using TaskManagementSystem.Application.Interfaces;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +26,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-// Configure JWT Authentication.
+// Configure JWT Bearer Authentication.
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -46,24 +46,63 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Register UnitOfWork, Repositories, and Application Services.
+// Register UnitOfWork, repositories, and application services.
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<ILabelService, LabelService>();
-builder.Services.AddScoped<IActivityLogService, ActivityLogService>(); // NEW
-builder.Services.AddScoped<ITeamService, TeamService>();               // NEW
-
-// Register Infrastructure External Services.
+builder.Services.AddScoped<IActivityLogService, ActivityLogService>();
+builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 
+
+// Add Swagger with a JWT Bearer definition.
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Task Management API",
+        Version = "v1"
+    });
+
+    // Define the Bearer security scheme
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "JWT Authorization header using the Bearer scheme.\r\n\r\nEnter 'Bearer' [space] and then your token.\r\n\r\nExample: \"Bearer eyJhbGc...\""
+    });
+
+    // Require the Bearer scheme for Swagger
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                  Reference = new OpenApiReference
+                  {
+                      Type = ReferenceType.SecurityScheme,
+                      Id = "Bearer"
+                  }
+             },
+             new string[] {}
+        }
+    });
+});
+
+
+// Add controllers and Swagger.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// Use Swagger in development.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -71,9 +110,16 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Map attribute-routed controllers.
 app.MapControllers();
+
+// Optionally, map a default conventional route.
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

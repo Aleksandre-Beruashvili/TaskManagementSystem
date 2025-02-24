@@ -1,27 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 using TaskManagementSystem.Application.DTOs;
-using TaskManagementSystem.Application.Interfaces;
+using TaskManagementSystem.UI.Services;
 
 namespace TaskManagementSystem.UI.Controllers
 {
     public class ProjectsController : Controller
     {
-        private readonly IProjectService _projectService;
+        private readonly IProjectApiService _projectApiService;
 
-        public ProjectsController(IProjectService projectService)
+        public ProjectsController(IProjectApiService projectApiService)
         {
-            _projectService = projectService;
+            _projectApiService = projectApiService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var projects = await _projectService.GetAllProjectsAsync();
+            var projects = await _projectApiService.GetAllProjectsAsync();
             return View(projects);
         }
 
         public async Task<IActionResult> Details(Guid id)
         {
-            var project = await _projectService.GetProjectByIdAsync(id);
+            var project = await _projectApiService.GetProjectByIdAsync(id);
             if (project == null)
                 return NotFound();
             return View(project);
@@ -38,7 +40,7 @@ namespace TaskManagementSystem.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                var project = await _projectService.CreateProjectAsync(dto);
+                var project = await _projectApiService.CreateProjectAsync(dto);
                 return RedirectToAction(nameof(Details), new { id = project.Id });
             }
             return View(dto);
@@ -46,7 +48,7 @@ namespace TaskManagementSystem.UI.Controllers
 
         public async Task<IActionResult> Edit(Guid id)
         {
-            var project = await _projectService.GetProjectByIdAsync(id);
+            var project = await _projectApiService.GetProjectByIdAsync(id);
             if (project == null)
                 return NotFound();
             var dto = new CreateProjectDto
@@ -64,7 +66,7 @@ namespace TaskManagementSystem.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _projectService.UpdateProjectAsync(id, dto);
+                await _projectApiService.UpdateProjectAsync(id, dto);
                 return RedirectToAction(nameof(Details), new { id = id });
             }
             return View(dto);
@@ -72,7 +74,7 @@ namespace TaskManagementSystem.UI.Controllers
 
         public async Task<IActionResult> Delete(Guid id)
         {
-            var project = await _projectService.GetProjectByIdAsync(id);
+            var project = await _projectApiService.GetProjectByIdAsync(id);
             if (project == null)
                 return NotFound();
             return View(project);
@@ -82,7 +84,7 @@ namespace TaskManagementSystem.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _projectService.DeleteProjectAsync(id);
+            await _projectApiService.DeleteProjectAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }

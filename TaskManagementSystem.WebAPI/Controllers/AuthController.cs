@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 using System.Security.Claims;
-using TaskManagementSystem.Infrastructure.Identity;
+using System.Text;
+using System.Threading.Tasks;
 using TaskManagementSystem.Application.DTOs;
+using TaskManagementSystem.Infrastructure.Identity;
 using TaskManagementSystem.Infrastructure.Services;
 
 namespace TaskManagementSystem.WebAPI.Controllers
@@ -27,6 +30,7 @@ namespace TaskManagementSystem.WebAPI.Controllers
             _emailService = emailService;
         }
 
+        // POST: api/auth/register
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserDto dto)
         {
@@ -41,8 +45,11 @@ namespace TaskManagementSystem.WebAPI.Controllers
 
             // Generate email confirmation token.
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            // Build confirmation link (ensure URL generation works in your environment)
-            var confirmationLink = Url.Action(nameof(ConfirmEmail), "Auth", new { userId = user.Id, token = token }, Request.Scheme);
+
+            // Build the confirmation link. Ensure your environment allows URL generation.
+            var confirmationLink = Url.Action(nameof(ConfirmEmail), "Auth",
+                                                new { userId = user.Id, token = token },
+                                                Request.Scheme);
 
             // Send confirmation email.
             await _emailService.SendEmailAsync(user.Email, "Confirm your email",
@@ -51,7 +58,8 @@ namespace TaskManagementSystem.WebAPI.Controllers
             return Ok("User registered successfully. Please check your email to confirm your account.");
         }
 
-        [HttpPost("confirmemail")]
+        // POST: api/auth/confirmemail
+        [HttpGet("confirmemail")]
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -61,25 +69,19 @@ namespace TaskManagementSystem.WebAPI.Controllers
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if (result.Succeeded)
                 return Ok("Email confirmed successfully");
-            else
-                return BadRequest(result.Errors);
+            return BadRequest(result.Errors);
         }
 
+        // POST: api/auth/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserDto dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Email);
             if (user == null || !(await _userManager.CheckPasswordAsync(user, dto.Password)))
-            {
                 return Unauthorized("Invalid credentials");
-            }
 
             var jwtSettings = _configuration.GetSection("JwtSettings");
-            var secretKey = jwtSettings["SecretKey"];
-            var issuer = jwtSettings["Issuer"];
-            var audience = jwtSettings["Audience"];
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
@@ -91,9 +93,9 @@ namespace TaskManagementSystem.WebAPI.Controllers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddHours(1),
-                Issuer = issuer,
-                Audience = audience,
+                Expires = DateTime.UtcNow.AddHours(double.Parse(jwtSettings["ExpiryInHours"])),
+                Issuer = jwtSettings["Issuer"],
+                Audience = jwtSettings["Audience"],
                 SigningCredentials = creds
             };
 
@@ -104,6 +106,7 @@ namespace TaskManagementSystem.WebAPI.Controllers
             return Ok(new { Token = jwtToken });
         }
 
+        // POST: api/auth/changepassword
         [HttpPost("changepassword")]
         public async Task<IActionResult> ChangePassword(string userId, string currentPassword, string newPassword)
         {
@@ -117,6 +120,7 @@ namespace TaskManagementSystem.WebAPI.Controllers
             return BadRequest(result.Errors);
         }
 
+        // POST: api/auth/forgotpassword
         [HttpPost("forgotpassword")]
         public async Task<IActionResult> ForgotPassword(string email)
         {
@@ -129,6 +133,7 @@ namespace TaskManagementSystem.WebAPI.Controllers
             return Ok("Password reset link has been sent to your email.");
         }
 
+        // POST: api/auth/resetpassword
         [HttpPost("resetpassword")]
         public async Task<IActionResult> ResetPassword(string userId, string token, string newPassword)
         {
@@ -142,22 +147,7 @@ namespace TaskManagementSystem.WebAPI.Controllers
             return BadRequest(result.Errors);
         }
 
-        // NEW: Send one-time verification code endpoint.
-        [HttpPost("sendverificationcode")]
-        public async Task<IActionResult> SendVerificationCode([FromBody] SendVerificationDto dto)
-        {
-            var user = await _userManager.FindByEmailAsync(dto.Email);
-            if (user == null)
-                return NotFound("User not found.");
 
-            // Generate a random 6-digit code.
-            var code = new Random().Next(100000, 999999).ToString();
-
-            // Optionally, store this code for later verification.
-            await _emailService.SendVerificationCodeAsync(dto.Email, code);
-
-            // For demonstration purposes only – do not return the code in production.
-            return Ok(new { Message = "Verification code sent.", Code = code });
-        }
+      
     }
 }
