@@ -7,7 +7,7 @@
 <h2>Delete Label</h2>
 <p>Are you sure you want to delete the label "<strong>@Model.Name</strong>"?</p>
 
-<form asp-action="DeleteConfirmed" method="post">
+<form asp-action="Delete" method="post">
     <input type="hidden" name="id" value="@Model.Id" />
     <button type="submit" class="btn btn-danger">Delete</button>
     <a class="btn btn-secondary" href="/Labels/Details/@Model.Id">Cancel</a>

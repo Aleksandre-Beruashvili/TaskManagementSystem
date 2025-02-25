@@ -72,6 +72,7 @@ namespace TaskManagementSystem.UI.Controllers
             return View(dto);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Delete(Guid id)
         {
             var project = await _projectApiService.GetProjectByIdAsync(id);

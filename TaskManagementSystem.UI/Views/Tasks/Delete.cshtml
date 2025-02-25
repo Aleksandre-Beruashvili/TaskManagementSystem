@@ -7,8 +7,9 @@
 <h2>Delete Task</h2>
 <p>Are you sure you want to delete the task "<strong>@Model.Title</strong>"?</p>
 
-<form asp-action="DeleteConfirmed" method="post">
-    <input type="hidden" name="id" value="@Model.Id" />
+<form asp-action="Delete" method="post">
+    <!-- Important: we pass the task ID with a hidden field, so the POST knows what to delete -->
+    <input type="hidden" asp-for="Id" />
     <button type="submit" class="btn btn-danger">Delete</button>
     <a class="btn btn-secondary" href="/Tasks/Details/@Model.Id">Cancel</a>
 </form>
