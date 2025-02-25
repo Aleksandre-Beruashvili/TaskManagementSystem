@@ -1,13 +1,12 @@
 ﻿@model IEnumerable<TaskManagementSystem.Application.DTOs.TaskDto>
 
 @{
-    ViewData["Title"] = "Tasks";
-    var projectId = ViewBag.Project?.Id;
+    ViewData["Title"] = "All Tasks";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Tasks for Project: @ViewBag.Project?.Name</h2>
-    <a class="btn btn-success" href="/Tasks/Create?projectId=@projectId">Create New Task</a>
+    <h2>All Tasks</h2>
+    <!-- No project context here -->
 </div>
 
 <table class="table table-bordered table-hover">
@@ -19,7 +18,6 @@
             <th>Priority</th>
             <th>Status</th>
             <th>Assigned User</th>
-            <th style="width: 20%;">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -32,11 +30,6 @@
                 <td>@task.Priority</td>
                 <td>@task.State</td>
                 <td>@task.AssignedUserId</td>
-                <td>
-                    <a class="btn btn-info btn-sm" href="/Tasks/Details/@task.Id">Details</a>
-                    <a class="btn btn-warning btn-sm" href="/Tasks/Edit/@task.Id">Edit</a>
-                    <a class="btn btn-danger btn-sm" href="/Tasks/Delete/@task.Id">Delete</a>
-                </td>
             </tr>
         }
     </tbody>

@@ -1,14 +1,19 @@
 ﻿@model IEnumerable<TaskManagementSystem.Application.DTOs.LabelDto>
+
 @{
     ViewData["Title"] = "Labels";
 }
-<h1>Labels</h1>
-<p><a href="/Labels/Create">Create New Label</a></p>
-<table>
-    <thead>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Labels</h2>
+    <a class="btn btn-success" href="/Labels/Create">Create New Label</a>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
         <tr>
             <th>Name</th>
-            <th>Actions</th>
+            <th style="width: 20%;">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -17,9 +22,9 @@
             <tr>
                 <td>@label.Name</td>
                 <td>
-                    <a href="/Labels/Details/@label.Id">Details</a> |
-                    <a href="/Labels/Edit/@label.Id">Edit</a> |
-                    <a href="/Labels/Delete/@label.Id">Delete</a>
+                    <a class="btn btn-info btn-sm" href="/Labels/Details/@label.Id">Details</a>
+                    <a class="btn btn-warning btn-sm" href="/Labels/Edit/@label.Id">Edit</a>
+                    <a class="btn btn-danger btn-sm" href="/Labels/Delete/@label.Id">Delete</a>
                 </td>
             </tr>
         }

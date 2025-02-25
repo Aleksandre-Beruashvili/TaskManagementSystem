@@ -45,12 +45,10 @@ namespace TaskManagementSystem.WebAPI.Controllers
 
             // Generate email confirmation token.
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
-            // Build the confirmation link. Ensure your environment allows URL generation.
+            // Build the confirmation link.
             var confirmationLink = Url.Action(nameof(ConfirmEmail), "Auth",
                                                 new { userId = user.Id, token = token },
                                                 Request.Scheme);
-
             // Send confirmation email.
             await _emailService.SendEmailAsync(user.Email, "Confirm your email",
                 $"Please confirm your account by clicking the following link: {confirmationLink}");
@@ -59,7 +57,7 @@ namespace TaskManagementSystem.WebAPI.Controllers
         }
 
         // POST: api/auth/confirmemail
-        [HttpGet("confirmemail")]
+        [HttpPost("confirmemail")]
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -147,7 +145,20 @@ namespace TaskManagementSystem.WebAPI.Controllers
             return BadRequest(result.Errors);
         }
 
+        // POST: api/auth/sendverificationcode
+        [HttpPost("sendverificationcode")]
+        public async Task<IActionResult> SendVerificationCode([FromBody] SendVerificationDto dto)
+        {
+            var user = await _userManager.FindByEmailAsync(dto.Email);
+            if (user == null)
+                return NotFound("User not found.");
 
-      
+            // Generate a random 6-digit code.
+            var code = new Random().Next(100000, 999999).ToString();
+            await _emailService.SendVerificationCodeAsync(dto.Email, code);
+
+            // For demo purposes only – do not return the code in production.
+            return Ok(new { Message = "Verification code sent.", Code = code });
+        }
     }
 }

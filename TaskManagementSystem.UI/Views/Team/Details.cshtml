@@ -1,0 +1,16 @@
+﻿@model TaskManagementSystem.Application.DTOs.TeamDto
+
+@{
+    ViewData["Title"] = "Team Details";
+}
+
+<div class="mb-4">
+    <h2>@Model.Name</h2>
+    <p><strong>Members:</strong> @string.Join(", ", Model.MemberIds)</p>
+</div>
+
+<div>
+    <a class="btn btn-warning" href="/Team/Edit/@Model.Id">Edit</a>
+    <a class="btn btn-danger" href="/Team/Delete/@Model.Id">Delete</a>
+    <a class="btn btn-secondary" href="/Team">Back to Teams</a>
+</div>

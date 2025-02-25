@@ -1,16 +1,21 @@
 ﻿@model IEnumerable<TaskManagementSystem.Application.DTOs.ProjectDto>
+
 @{
     ViewData["Title"] = "Projects";
 }
-<h1>Projects</h1>
-<p><a href="/Projects/Create">Create New Project</a></p>
-<table>
-    <thead>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Projects</h2>
+    <a class="btn btn-success" href="/Projects/Create">Create New Project</a>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
         <tr>
             <th>Name</th>
             <th>Description</th>
             <th>Due Date</th>
-            <th>Actions</th>
+            <th style="width: 20%;">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -21,9 +26,9 @@
                 <td>@project.Description</td>
                 <td>@project.DueDate.ToShortDateString()</td>
                 <td>
-                    <a href="/Projects/Details/@project.Id">Details</a> |
-                    <a href="/Projects/Edit/@project.Id">Edit</a> |
-                    <a href="/Projects/Delete/@project.Id">Delete</a>
+                    <a class="btn btn-info btn-sm" href="/Projects/Details/@project.Id">Details</a>
+                    <a class="btn btn-warning btn-sm" href="/Projects/Edit/@project.Id">Edit</a>
+                    <a class="btn btn-danger btn-sm" href="/Projects/Delete/@project.Id">Delete</a>
                 </td>
             </tr>
         }

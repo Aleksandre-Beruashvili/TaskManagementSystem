@@ -9,20 +9,20 @@ var builder = WebApplication.CreateBuilder(args);
 // Read the WebAPI base URL from configuration.
 var webApiBaseUrl = builder.Configuration["WebApiBaseUrl"];
 
+// Add MVC services.
 builder.Services.AddControllersWithViews();
 
-// Register a simple token service.
+// Register a simple token service (to store/retrieve the JWT token).
 builder.Services.AddSingleton<ITokenService, TokenService>();
 
-// Register a DelegatingHandler to attach the JWT token automatically.
+// Register our DelegatingHandler to attach the JWT token to outgoing requests.
 builder.Services.AddTransient<JwtAuthorizationMessageHandler>();
 
-// Register typed HttpClient services for API consumption using the correct base URL.
+// Register typed HttpClient services to call WebAPI endpoints and add the JWT handler.
 builder.Services.AddHttpClient<IAuthApiService, AuthApiService>(client =>
 {
     client.BaseAddress = new Uri(webApiBaseUrl);
 })
-// Since you're using HTTP (not HTTPS), you don't need to bypass certificate validation.
 .AddHttpMessageHandler<JwtAuthorizationMessageHandler>();
 
 builder.Services.AddHttpClient<IProjectApiService, ProjectApiService>(client =>
@@ -50,13 +50,13 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.MapControllers();
 
 app.MapControllerRoute(
     name: "default",

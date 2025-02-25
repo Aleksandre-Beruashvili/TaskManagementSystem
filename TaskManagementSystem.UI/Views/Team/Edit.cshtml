@@ -1,10 +1,10 @@
-﻿@model TaskManagementSystem.Application.DTOs.CreateLabelDto
+﻿@model TaskManagementSystem.Application.DTOs.TeamDto
 
 @{
-    ViewData["Title"] = "Edit Label";
+    ViewData["Title"] = "Edit Team";
 }
 
-<h2>Edit Label</h2>
+<h2>Edit Team</h2>
 
 <form asp-action="Edit" method="post">
     <div class="mb-3">
@@ -12,8 +12,13 @@
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
+    <!-- Optionally, allow editing of members -->
+    <div class="mb-3">
+        <label class="form-label">Member IDs (comma separated)</label>
+        <input type="text" name="MemberIds" class="form-control" value="@string.Join(",", Model.MemberIds)" />
+    </div>
     <button type="submit" class="btn btn-primary">Save</button>
-    <a class="btn btn-secondary" href="/Labels">Cancel</a>
+    <a class="btn btn-secondary" href="/Team">Cancel</a>
 </form>
 
 @section Scripts {

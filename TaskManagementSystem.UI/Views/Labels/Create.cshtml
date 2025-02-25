@@ -1,13 +1,23 @@
 ﻿@model TaskManagementSystem.Application.DTOs.CreateLabelDto
+
 @{
     ViewData["Title"] = "Create Label";
 }
-<h1>Create Label</h1>
+
+<h2>Create Label</h2>
+
 <form asp-action="Create" method="post">
-    <div>
-        <label asp-for="Name"></label>
-        <input asp-for="Name" />
-        <span asp-validation-for="Name"></span>
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
     </div>
-    <button type="submit">Create</button>
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a class="btn btn-secondary" href="/Labels">Cancel</a>
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

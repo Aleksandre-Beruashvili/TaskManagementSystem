@@ -1,38 +1,48 @@
 ﻿@model TaskManagementSystem.Application.DTOs.CreateTaskDto
+
 @{
     ViewData["Title"] = "Create Task";
 }
-<h1>Create Task</h1>
+
+<h2>Create Task</h2>
+
 <form asp-action="Create" method="post">
     <input type="hidden" asp-for="ProjectId" />
-    <div>
-        <label asp-for="Title"></label>
-        <input asp-for="Title" />
-        <span asp-validation-for="Title"></span>
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
     </div>
-    <div>
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description"></textarea>
-        <span asp-validation-for="Description"></span>
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
     </div>
-    <div>
-        <label asp-for="DueDate"></label>
-        <input asp-for="DueDate" type="date" />
-        <span asp-validation-for="DueDate"></span>
+    <div class="mb-3">
+        <label asp-for="DueDate" class="form-label"></label>
+        <input asp-for="DueDate" type="date" class="form-control" />
+        <span asp-validation-for="DueDate" class="text-danger"></span>
     </div>
-    <div>
-        <label asp-for="Priority"></label>
-        <select asp-for="Priority">
+    <div class="mb-3">
+        <label asp-for="Priority" class="form-label"></label>
+        <select asp-for="Priority" class="form-select">
             <option value="Low">Low</option>
             <option value="Medium" selected>Medium</option>
             <option value="High">High</option>
         </select>
-        <span asp-validation-for="Priority"></span>
+        <span asp-validation-for="Priority" class="text-danger"></span>
     </div>
-    <div>
-        <label asp-for="AssignedUserId">Assign User (UserId)</label>
-        <input asp-for="AssignedUserId" />
-        <span asp-validation-for="AssignedUserId"></span>
+    <div class="mb-3">
+        <label asp-for="AssignedUserId" class="form-label">Assigned User (UserId)</label>
+        <input asp-for="AssignedUserId" class="form-control" />
+        <span asp-validation-for="AssignedUserId" class="text-danger"></span>
     </div>
-    <button type="submit">Create</button>
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a class="btn btn-secondary" href="/Tasks">Cancel</a>
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

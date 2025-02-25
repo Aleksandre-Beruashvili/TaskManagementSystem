@@ -1,4 +1,5 @@
 ﻿using System;
+using TaskManagementSystem.Domain.Entities;
 
 namespace TaskManagementSystem.Application.DTOs
 {
@@ -8,5 +9,6 @@ namespace TaskManagementSystem.Application.DTOs
         public string Name { get; set; }
         public string Description { get; set; }
         public DateTime DueDate { get; set; }
+
     }
 }

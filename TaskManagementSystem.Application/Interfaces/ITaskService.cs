@@ -13,5 +13,7 @@ namespace TaskManagementSystem.Application.Interfaces
         Task UpdateTaskAsync(Guid id, CreateTaskDto dto);
         Task DeleteTaskAsync(Guid id);
         Task<IEnumerable<TaskDto>> SearchTasksAsync(string keyword);
+        Task<IEnumerable<TaskDto>> GetAllTasksAsync();
+
     }
 }

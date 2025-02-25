@@ -1,16 +1,20 @@
 ﻿@model TaskManagementSystem.Application.DTOs.TaskDto
+
 @{
     ViewData["Title"] = "Task Details";
 }
-<h1>Task Details</h1>
-<p><strong>Title:</strong> @Model.Title</p>
-<p><strong>Description:</strong> @Model.Description</p>
-<p><strong>Due Date:</strong> @Model.DueDate.ToShortDateString()</p>
-<p><strong>Priority:</strong> @Model.Priority</p>
-<p><strong>State:</strong> @Model.State</p>
-<p><strong>Assigned User:</strong> @Model.AssignedUserId</p>
-<p>
-    <a href="/Tasks/Edit/@Model.Id">Edit</a> |
-    <a href="/Tasks/Delete/@Model.Id">Delete</a> |
-    <a href="/Projects/Details/@Model.ProjectId">Back to Project</a>
-</p>
+
+<div class="mb-4">
+    <h2>@Model.Title</h2>
+    <p><strong>Description:</strong> @Model.Description</p>
+    <p><strong>Due Date:</strong> @Model.DueDate.ToShortDateString()</p>
+    <p><strong>Priority:</strong> @Model.Priority</p>
+    <p><strong>Status:</strong> @Model.State</p>
+    <p><strong>Assigned User:</strong> @Model.AssignedUserId</p>
+</div>
+
+<div>
+    <a class="btn btn-warning" href="/Tasks/Edit/@Model.Id">Edit</a>
+    <a class="btn btn-danger" href="/Tasks/Delete/@Model.Id">Delete</a>
+    <a class="btn btn-secondary" href="/Projects/Details/@Model.ProjectId">Back to Project</a>
+</div>

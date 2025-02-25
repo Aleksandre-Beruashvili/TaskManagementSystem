@@ -12,5 +12,7 @@ namespace TaskManagementSystem.UI.Services
         Task<TaskDto> CreateTaskAsync(CreateTaskDto dto);
         Task UpdateTaskAsync(Guid id, CreateTaskDto dto);
         Task DeleteTaskAsync(Guid id);
+        Task<IEnumerable<TaskDto>> GetAllTasksAsync();
+
     }
 }

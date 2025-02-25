@@ -1,11 +1,14 @@
 ﻿@model TaskManagementSystem.Application.DTOs.LabelDto
+
 @{
     ViewData["Title"] = "Delete Label";
 }
-<h1>Delete Label</h1>
+
+<h2>Delete Label</h2>
 <p>Are you sure you want to delete the label "<strong>@Model.Name</strong>"?</p>
+
 <form asp-action="DeleteConfirmed" method="post">
     <input type="hidden" name="id" value="@Model.Id" />
-    <button type="submit">Delete</button>
-    <a href="/Labels/Details/@Model.Id">Cancel</a>
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a class="btn btn-secondary" href="/Labels/Details/@Model.Id">Cancel</a>
 </form>

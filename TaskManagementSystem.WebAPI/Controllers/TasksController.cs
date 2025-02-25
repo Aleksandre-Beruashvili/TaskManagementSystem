@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 using TaskManagementSystem.Application.DTOs;
 using TaskManagementSystem.Application.Interfaces;
 
@@ -11,10 +13,16 @@ namespace TaskManagementSystem.WebAPI.Controllers
     public class TasksController : ControllerBase
     {
         private readonly ITaskService _taskService;
-
         public TasksController(ITaskService taskService)
         {
             _taskService = taskService;
+        }
+
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllTasks()
+        {
+            var tasks = await _taskService.GetAllTasksAsync();
+            return Ok(tasks);
         }
 
         [HttpPost]
@@ -52,14 +60,6 @@ namespace TaskManagementSystem.WebAPI.Controllers
         {
             await _taskService.DeleteTaskAsync(id);
             return NoContent();
-        }
-
-        // Optionally, add search functionality.
-        [HttpGet("search")]
-        public async Task<IActionResult> SearchTasks([FromQuery] string keyword)
-        {
-            var tasks = await _taskService.SearchTasksAsync(keyword);
-            return Ok(tasks);
         }
     }
 }

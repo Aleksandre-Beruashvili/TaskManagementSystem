@@ -1,0 +1,34 @@
+﻿@model IEnumerable<TaskManagementSystem.Application.DTOs.TeamDto>
+
+@{
+    ViewData["Title"] = "Teams";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Teams</h2>
+    <a class="btn btn-success" href="/Team/Create">Create New Team</a>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>Team Name</th>
+            <th>Members</th>
+            <th style="width: 20%;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var team in Model)
+        {
+            <tr>
+                <td>@team.Name</td>
+                <td>@string.Join(", ", team.MemberIds)</td>
+                <td>
+                    <a class="btn btn-info btn-sm" href="/Team/Details/@team.Id">Details</a>
+                    <a class="btn btn-warning btn-sm" href="/Team/Edit/@team.Id">Edit</a>
+                    <a class="btn btn-danger btn-sm" href="/Team/Delete/@team.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

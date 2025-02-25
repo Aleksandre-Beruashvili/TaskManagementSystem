@@ -1,12 +1,22 @@
 ﻿@model TaskManagementSystem.Application.DTOs.ProjectDto
+
 @{
     ViewData["Title"] = "Project Details";
 }
-<h1>@Model.Name</h1>
-<p>@Model.Description</p>
-<p>Due: @Model.DueDate.ToShortDateString()</p>
-<p>
-    <a href="/Projects/Edit/@Model.Id">Edit</a> |
-    <a href="/Projects/Delete/@Model.Id">Delete</a> |
-    <a href="/Tasks?projectId=@Model.Id">View Tasks</a>
-</p>
+
+<div class="mb-4">
+    <h2>@Model.Name</h2>
+    <p>@Model.Description</p>
+    <p><strong>Due Date:</strong> @Model.DueDate.ToShortDateString()</p>
+</div>
+
+<div class="mb-3">
+    <!-- Add a Tasks button that sends the project Id in the query string -->
+    <a class="btn btn-success" href="/Tasks?projectId=@Model.Id">View Tasks</a>
+</div>
+
+<div>
+    <a class="btn btn-warning" href="/Projects/Edit/@Model.Id">Edit Project</a>
+    <a class="btn btn-danger" href="/Projects/Delete/@Model.Id">Delete Project</a>
+    <a class="btn btn-secondary" href="/Projects">Back to Projects</a>
+</div>

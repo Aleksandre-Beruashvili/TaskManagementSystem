@@ -1,11 +1,15 @@
 ﻿@model TaskManagementSystem.Application.DTOs.LabelDto
+
 @{
     ViewData["Title"] = "Label Details";
 }
-<h1>Label Details</h1>
-<p><strong>Name:</strong> @Model.Name</p>
-<p>
-    <a href="/Labels/Edit/@Model.Id">Edit</a> |
-    <a href="/Labels/Delete/@Model.Id">Delete</a> |
-    <a href="/Labels">Back to Labels</a>
-</p>
+
+<div class="mb-4">
+    <h2>@Model.Name</h2>
+</div>
+
+<div>
+    <a class="btn btn-warning" href="/Labels/Edit/@Model.Id">Edit</a>
+    <a class="btn btn-danger" href="/Labels/Delete/@Model.Id">Delete</a>
+    <a class="btn btn-secondary" href="/Labels">Back to Labels</a>
+</div>

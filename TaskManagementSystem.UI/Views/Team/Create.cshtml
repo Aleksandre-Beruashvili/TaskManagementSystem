@@ -1,0 +1,28 @@
+﻿@model TaskManagementSystem.Application.DTOs.TeamDto
+
+@{
+    ViewData["Title"] = "Create Team";
+}
+
+<h2>Create Team</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <!-- Optionally, you can allow entry of initial members as a comma-separated list -->
+    <div class="mb-3">
+        <label class="form-label">Member IDs (comma separated)</label>
+        <input type="text" name="MemberIds" class="form-control" placeholder="user1,user2,user3" />
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a class="btn btn-secondary" href="/Team">Cancel</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

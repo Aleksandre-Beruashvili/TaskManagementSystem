@@ -19,6 +19,22 @@ namespace TaskManagementSystem.Application.Services
             _unitOfWork = unitOfWork;
         }
 
+        public async Task<IEnumerable<TaskDto>> GetAllTasksAsync()
+        {
+            var tasks = await _unitOfWork.TaskRepository.GetAllAsync();
+            return tasks.Select(t => new TaskDto
+            {
+                Id = t.Id,
+                Title = t.Title,
+                Description = t.Description,
+                DueDate = t.DueDate,
+                Priority = t.Priority,
+                State = t.State,
+                ProjectId = t.ProjectId,
+                AssignedUserId = t.AssignedUserId
+            });
+        }
+
         public async Task<TaskDto> CreateTaskAsync(CreateTaskDto dto)
         {
             // Validate that the parent project exists
@@ -129,6 +145,7 @@ namespace TaskManagementSystem.Application.Services
                 ProjectId = t.ProjectId,
                 AssignedUserId = t.AssignedUserId
             });
+
         }
     }
 }

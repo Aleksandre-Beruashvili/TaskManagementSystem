@@ -43,5 +43,11 @@ namespace TaskManagementSystem.UI.Services
             var response = await _httpClient.DeleteAsync($"api/tasks/{id}");
             response.EnsureSuccessStatusCode();
         }
+
+        public async Task<IEnumerable<TaskDto>> GetAllTasksAsync()
+        {
+            // Calls GET /api/tasks/all
+            return await _httpClient.GetFromJsonAsync<IEnumerable<TaskDto>>("api/tasks/all");
+        }
     }
 }

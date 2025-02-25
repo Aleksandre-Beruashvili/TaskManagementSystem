@@ -11,17 +11,30 @@ namespace TaskManagementSystem.UI.Controllers
         private readonly ITaskApiService _taskApiService;
         private readonly IProjectApiService _projectApiService;
 
+
         public TasksController(ITaskApiService taskApiService, IProjectApiService projectApiService)
         {
             _taskApiService = taskApiService;
             _projectApiService = projectApiService;
         }
 
-        public async Task<IActionResult> Index(Guid projectId)
+        // Index action that handles an optional projectId
+        public async Task<IActionResult> Index(Guid? projectId)
         {
-            ViewBag.Project = await _projectApiService.GetProjectByIdAsync(projectId);
-            var tasks = await _taskApiService.GetTasksByProjectIdAsync(projectId);
-            return View(tasks);
+            if (projectId == null || projectId == Guid.Empty)
+            {
+                // No projectId => call GetAllTasks
+                var allTasks = await _taskApiService.GetAllTasksAsync();
+                return View("IndexAll", allTasks);
+                // Or just reuse the same view "Index", if it can handle tasks from multiple projects
+            }
+            else
+            {
+                // We have a projectId => fetch tasks for that project
+                ViewBag.Project = await _projectApiService.GetProjectByIdAsync(projectId.Value);
+                var tasks = await _taskApiService.GetTasksByProjectIdAsync(projectId.Value);
+                return View("Index", tasks);
+            }
         }
 
         public async Task<IActionResult> Details(Guid id)
