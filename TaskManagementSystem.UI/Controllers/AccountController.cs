@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TaskManagementSystem.Application.DTOs;
 using TaskManagementSystem.UI.Models;
@@ -11,6 +15,14 @@ namespace TaskManagementSystem.UI.Controllers
         private readonly IAuthApiService _authApiService;
         private readonly ITokenService _tokenService;
 
+        [HttpGet]
+        public IActionResult RegistrationConfirmation()
+        {
+            ViewBag.UseAlternateLayout = true;
+            ViewBag.Message = "Registration successful! A confirmation email has been sent to your email address. Please check your email and click the confirmation link to activate your account.";
+            return View();  // This looks for Views/Account/RegistrationConfirmation.cshtml
+        }
+
         public AccountController(IAuthApiService authApiService, ITokenService tokenService)
         {
             _authApiService = authApiService;
@@ -20,6 +32,7 @@ namespace TaskManagementSystem.UI.Controllers
         [HttpGet]
         public IActionResult Register()
         {
+            ViewBag.UseAlternateLayout = true; // Use minimal header for registration page.
             return View();
         }
 
@@ -39,8 +52,8 @@ namespace TaskManagementSystem.UI.Controllers
                 try
                 {
                     var resultMessage = await _authApiService.RegisterAsync(registerDto);
-                    // Optionally log in automatically or show a confirmation message.
-                    return RedirectToAction("Index", "Home");
+                    // Optionally, display a message or auto-login
+                    return RedirectToAction("RegistrationConfirmation");
                 }
                 catch
                 {
@@ -53,8 +66,10 @@ namespace TaskManagementSystem.UI.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            ViewBag.UseAlternateLayout = true; // Use minimal header for login page.
             return View();
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -71,22 +86,40 @@ namespace TaskManagementSystem.UI.Controllers
                 try
                 {
                     var token = await _authApiService.LoginAsync(loginDto);
+                    if (string.IsNullOrEmpty(token))
+                    {
+                        ModelState.AddModelError(string.Empty, "Received empty token.");
+                        return View(model);
+                    }
+
                     _tokenService.SetToken(token);
+
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, model.Email)
+                    };
+                    var identity = new ClaimsIdentity(claims, "Cookies");
+                    var principal = new ClaimsPrincipal(identity);
+                    await HttpContext.SignInAsync("Cookies", principal);
+
                     return RedirectToAction("Index", "Home");
                 }
-                catch
+                catch (System.Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, "Login failed. Please check your credentials.");
+                    // This will catch the "Email not confirmed..." error
+                    ModelState.AddModelError(string.Empty, ex.Message);
                 }
             }
             return View(model);
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
             _tokenService.SetToken(null);
+            await HttpContext.SignOutAsync("Cookies");
             return RedirectToAction("Index", "Home");
         }
     }

@@ -57,17 +57,18 @@ namespace TaskManagementSystem.WebAPI.Controllers
         }
 
         // POST: api/auth/confirmemail
-        [HttpPost("confirmemail")]
+        [HttpGet("confirmemail")]
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-                return BadRequest("Invalid User ID");
+                return Redirect("http://localhost:5248/Account/ConfirmEmail?status=error&message=Invalid%20User%20ID");
 
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if (result.Succeeded)
-                return Ok("Email confirmed successfully");
-            return BadRequest(result.Errors);
+                return Redirect("http://localhost:5248/Account/ConfirmEmail?status=success");
+            else
+                return Redirect("http://localhost:5248/Account/ConfirmEmail?status=error&message=Email%20confirmation%20failed");
         }
 
         // POST: api/auth/login
@@ -75,8 +76,22 @@ namespace TaskManagementSystem.WebAPI.Controllers
         public async Task<IActionResult> Login([FromBody] LoginUserDto dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Email);
-            if (user == null || !(await _userManager.CheckPasswordAsync(user, dto.Password)))
-                return Unauthorized("Invalid credentials");
+
+            if (user == null)
+            {
+                return Unauthorized("User not found.");
+            }
+
+            var validPassword = await _userManager.CheckPasswordAsync(user, dto.Password);
+            if (!validPassword)
+            {
+                return Unauthorized("Wrong password.");
+            }
+
+            if (!await _userManager.IsEmailConfirmedAsync(user))
+            {
+                return Unauthorized("Email not confirmed. Please check your email and confirm your account.");
+            }
 
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]));

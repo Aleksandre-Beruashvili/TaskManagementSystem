@@ -1,6 +1,14 @@
 ﻿@{
     ViewData["Title"] = "Home";
 }
+
+@if (TempData["AccountDeletedMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["AccountDeletedMessage"]
+    </div>
+}
+
 <div class="text-center">
     <h1 class="display-4">Welcome to Task Management System</h1>
     <p class="lead">Manage your projects, tasks, labels, and teams with ease.</p>

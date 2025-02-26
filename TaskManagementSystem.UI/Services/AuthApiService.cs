@@ -16,7 +16,12 @@ namespace TaskManagementSystem.UI.Services
         public async Task<string> LoginAsync(LoginUserDto loginDto)
         {
             var response = await _httpClient.PostAsJsonAsync("api/auth/login", loginDto);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                // Read error message from API.
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                throw new System.Exception(errorMessage);
+            }
             var result = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
             return result.Token;
         }

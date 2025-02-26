@@ -9,7 +9,6 @@ namespace TaskManagementSystem.UI.Controllers
     public class ProjectsController : Controller
     {
         private readonly IProjectApiService _projectApiService;
-
         public ProjectsController(IProjectApiService projectApiService)
         {
             _projectApiService = projectApiService;
@@ -29,10 +28,7 @@ namespace TaskManagementSystem.UI.Controllers
             return View(project);
         }
 
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -67,12 +63,11 @@ namespace TaskManagementSystem.UI.Controllers
             if (ModelState.IsValid)
             {
                 await _projectApiService.UpdateProjectAsync(id, dto);
-                return RedirectToAction(nameof(Details), new { id = id });
+                return RedirectToAction(nameof(Details), new { id });
             }
             return View(dto);
         }
 
-        [HttpGet]
         public async Task<IActionResult> Delete(Guid id)
         {
             var project = await _projectApiService.GetProjectByIdAsync(id);

@@ -1,0 +1,10 @@
+﻿@{
+    ViewData["Title"] = "Profile";
+}
+
+<h2>Your Profile</h2>
+<p>You can delete your account here. This action is irreversible.</p>
+
+<form asp-action="DeleteAccount" method="post" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+    <button type="submit" class="btn btn-danger">Delete Account</button>
+</form>

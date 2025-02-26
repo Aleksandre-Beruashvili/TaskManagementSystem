@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using TaskManagementSystem.Application.DTOs;
 using TaskManagementSystem.UI.Services;
 
 namespace TaskManagementSystem.UI.Controllers
@@ -9,7 +8,6 @@ namespace TaskManagementSystem.UI.Controllers
     public class LabelsController : Controller
     {
         private readonly ILabelApiService _labelApiService;
-
         public LabelsController(ILabelApiService labelApiService)
         {
             _labelApiService = labelApiService;
@@ -24,19 +22,15 @@ namespace TaskManagementSystem.UI.Controllers
         public async Task<IActionResult> Details(Guid id)
         {
             var label = await _labelApiService.GetLabelByIdAsync(id);
-            if (label == null)
-                return NotFound();
+            if (label == null) return NotFound();
             return View(label);
         }
 
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateLabelDto dto)
+        public async Task<IActionResult> Create(TaskManagementSystem.Application.DTOs.CreateLabelDto dto)
         {
             if (ModelState.IsValid)
             {
@@ -49,30 +43,27 @@ namespace TaskManagementSystem.UI.Controllers
         public async Task<IActionResult> Edit(Guid id)
         {
             var label = await _labelApiService.GetLabelByIdAsync(id);
-            if (label == null)
-                return NotFound();
-            var dto = new CreateLabelDto { Name = label.Name };
+            if (label == null) return NotFound();
+            var dto = new TaskManagementSystem.Application.DTOs.CreateLabelDto { Name = label.Name };
             return View(dto);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, CreateLabelDto dto)
+        public async Task<IActionResult> Edit(Guid id, TaskManagementSystem.Application.DTOs.CreateLabelDto dto)
         {
             if (ModelState.IsValid)
             {
                 await _labelApiService.UpdateLabelAsync(id, dto);
-                return RedirectToAction(nameof(Details), new { id = id });
+                return RedirectToAction(nameof(Details), new { id });
             }
             return View(dto);
         }
 
-        [HttpGet]
         public async Task<IActionResult> Delete(Guid id)
         {
             var label = await _labelApiService.GetLabelByIdAsync(id);
-            if (label == null)
-                return NotFound();
+            if (label == null) return NotFound();
             return View(label);
         }
 

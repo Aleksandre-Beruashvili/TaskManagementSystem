@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -11,6 +12,17 @@ var webApiBaseUrl = builder.Configuration["WebApiBaseUrl"];
 
 // Add MVC services.
 builder.Services.AddControllersWithViews();
+
+// Configure cookie authentication with custom expiration settings.
+builder.Services.AddAuthentication("Cookies")
+    .AddCookie("Cookies", options =>
+    {
+        options.LoginPath = "/Account/Login"; // Redirect to login if unauthorized.
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Cookie expires after 30 minutes.
+        options.SlidingExpiration = true; // Renew cookie if user is active.
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict;
+    });
 
 // Register a simple token service (to store/retrieve the JWT token).
 builder.Services.AddSingleton<ITokenService, TokenService>();
@@ -38,6 +50,13 @@ builder.Services.AddHttpClient<ITaskApiService, TaskApiService>(client =>
 .AddHttpMessageHandler<JwtAuthorizationMessageHandler>();
 
 builder.Services.AddHttpClient<ILabelApiService, LabelApiService>(client =>
+{
+    client.BaseAddress = new Uri(webApiBaseUrl);
+})
+.AddHttpMessageHandler<JwtAuthorizationMessageHandler>();
+
+// Register the Profile API service so that the ProfileController can resolve IProfileApiService.
+builder.Services.AddHttpClient<IProfileApiService, ProfileApiService>(client =>
 {
     client.BaseAddress = new Uri(webApiBaseUrl);
 })
